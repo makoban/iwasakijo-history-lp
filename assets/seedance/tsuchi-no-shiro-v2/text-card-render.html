@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>土の城 テキストカード</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --w: 1920px;
+      --h: 1080px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #050505;
+      font-family: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif CJK JP", serif;
+    }
+
+    .stage {
+      display: grid;
+      gap: 40px;
+      padding: 40px;
+    }
+
+    .card {
+      position: relative;
+      width: var(--w);
+      height: var(--h);
+      overflow: hidden;
+      background: #111;
+      isolation: isolate;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: var(--bg);
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.03);
+      z-index: -2;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.78), rgba(0,0,0,.42) 42%, rgba(0,0,0,.08) 72%),
+        linear-gradient(0deg, rgba(0,0,0,.58), rgba(0,0,0,.04) 52%, rgba(0,0,0,.45));
+      z-index: -1;
+    }
+
+    .content {
+      position: absolute;
+      left: 112px;
+      bottom: 108px;
+      max-width: 1040px;
+      color: #fffdf4;
+      text-shadow: 0 6px 22px rgba(0,0,0,.86), 0 1px 0 rgba(0,0,0,.9);
+    }
+
+    .label {
+      margin-bottom: 34px;
+      color: #d39a45;
+      font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .headline {
+      margin: 0;
+      font-size: 118px;
+      line-height: 1.12;
+      font-weight: 900;
+      letter-spacing: .02em;
+      text-wrap: balance;
+    }
+
+    .headline.large {
+      font-size: 164px;
+      line-height: 1.02;
+    }
+
+    .sub {
+      margin-top: 36px;
+      font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+      font-size: 38px;
+      line-height: 1.6;
+      font-weight: 800;
+      color: rgba(255,255,255,.92);
+    }
+
+    .right .content {
+      left: auto;
+      right: 96px;
+      max-width: 980px;
+      text-align: right;
+    }
+
+    .center .content {
+      left: 50%;
+      top: 50%;
+      bottom: auto;
+      transform: translate(-50%, -50%);
+      max-width: 1280px;
+      text-align: center;
+    }
+
+    .center::after {
+      background: radial-gradient(circle at center, rgba(0,0,0,.18), rgba(0,0,0,.78));
+    }
+
+    body.single {
+      width: var(--w);
+      height: var(--h);
+      overflow: hidden;
+    }
+
+    body.single .stage {
+      display: block;
+      width: var(--w);
+      height: var(--h);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body.single .card {
+      display: none;
+    }
+
+    body.single .card.is-active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <section id="card-01-title" class="card center" style="--bg:url('./cut-01-opening-earth-castle.png')">
+      <div class="content">
+        <div class="label">岩崎城 歴史短編</div>
+        <h1 class="headline large">土の城</h1>
+        <div class="sub">天守ではなく、地形で戦った。</div>
+      </div>
+    </section>
+
+    <section id="card-02-no-tenshu" class="card" style="--bg:url('./cut-01-opening-earth-castle.png')">
+      <div class="content">
+        <div class="label">戦国の岩崎城</div>
+        <h1 class="headline">岩崎城は、<br>天守ではなかった。</h1>
+      </div>
+    </section>
+
+    <section id="card-03-earthworks" class="card" style="--bg:url('./cut-02-building-earthworks.png')">
+      <div class="content">
+        <div class="label">土の城のしくみ</div>
+        <h1 class="headline">土を積み、<br>堀を掘り、<br>道を絞る。</h1>
+      </div>
+    </section>
+
+    <section id="card-04-delay" class="card right" style="--bg:url('./cut-06-earth-bridge-bottleneck.png')">
+      <div class="content">
+        <div class="label">天正十二年</div>
+        <h1 class="headline">小さな城が、<br>時間を奪った。</h1>
+      </div>
+    </section>
+
+    <section id="card-05-nagakute" class="card" style="--bg:url('./cut-08-aftermath-road.png')">
+      <div class="content">
+        <div class="label">岩崎城の戦い</div>
+        <h1 class="headline">その遅れは、<br>長久手へ<br>つながった。</h1>
+        <div class="sub">そう伝わる。</div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const activeCard = new URLSearchParams(window.location.search).get("card");
+    if (activeCard) {
+      document.body.classList.add("single");
+      const card = document.getElementById(activeCard);
+      if (card) {
+        card.classList.add("is-active");
+      }
+    }
+  </script>
+</body>
+</html>
