@@ -1,0 +1,9 @@
+cut,start,end,purpose,visual,text,sound,seedance_reference
+1,0,3,映画として始める,夕暮れの土の城の稜線,土の城,低い風・遠い鳥,scene-04-earth-castle-final.png
+2,3,7,城は土木だったと見せる,籠・鍬・土を運ぶ手元,土を積み、堀を掘る。,土を掘る音・籠を置く音,scene-01-building-earthworks.png
+3,7,11,地形防御を理解させる,空堀の底から土橋を見上げる,ここは、地形で守る城だった。,風・木柵のきしみ,scene-01-building-earthworks.png
+4,11,15,城が道を押さえた理由を見せる,街道市場・荷駄・陶器・奥に土の城,尾張と三河を結ぶ道。,馬の足音・人のざわめき,scene-02-roadside-market.png
+5,15,19,戦いが近づく,朝霧の道に槍と旗が現れる,天正12年、軍勢が通る。,遠い太鼓・鎧の擦れ,scene-03-battle-dawn.png
+6,19,24,土橋で足止めする核心,狭い土橋へ兵が詰まり上から城兵が守る,小さな城が、時間を奪った。,足音・槍・木柵に当たる音,scene-03-battle-dawn.png
+7,24,28,戦いの後の意味を残す,霧・空堀・静かな木柵・遠ざかる道,その遅れは、長久手へつながったと伝わる。,風・遠ざかる足音,scene-03-battle-dawn.png
+8,28,30,現在の記憶へ戻す,土塁と空堀を歩くような静かな現在の丘,岩崎城,風・鳥・足音,assets/photos/iwasaki-castle-current.jpg
