@@ -734,22 +734,33 @@ figcaption {
   }
 
   .hero {
-    min-height: 86vh;
-    padding: 86px 18px 142px;
+    min-height: auto;
+    padding: 430px 18px 28px;
+  }
+
+  .hero-media {
+    height: 520px;
+    bottom: auto;
   }
 
   .hero-media::after {
     background:
-      linear-gradient(180deg, rgba(15, 21, 18, 0.42), rgba(15, 21, 18, 0.86) 58%, rgba(15, 21, 18, 0.92)),
-      linear-gradient(90deg, rgba(15, 21, 18, 0.48), transparent);
+      linear-gradient(180deg, rgba(15, 21, 18, 0.02), rgba(15, 21, 18, 0.22) 42%, rgba(15, 21, 18, 0.86)),
+      linear-gradient(90deg, rgba(15, 21, 18, 0.1), transparent 72%);
+  }
+
+  .hero-media img {
+    object-position: 72% top;
   }
 
   .hero-content {
     align-self: end;
+    max-width: none;
   }
 
   .hero h1 {
-    font-size: 42px;
+    font-size: 39px;
+    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.4);
   }
 
   .section h2 {
@@ -760,11 +771,26 @@ figcaption {
     font-size: 16px;
   }
 
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .button {
+    min-height: 52px;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
   .hero-note {
-    left: 18px;
-    right: 18px;
-    bottom: 20px;
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
     max-width: none;
+    margin-top: 18px;
   }
 
   .section {
