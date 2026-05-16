@@ -183,14 +183,73 @@
         <h2>「小さな城」が、なぜ戦局に関わったのか</h2>
         <p>断定しすぎずに言えば、岩崎城の抵抗は、羽柴方の三河中入軍を止める要素の一つになりました。ここから長久手での決戦につながります。</p>
       </div>
-      <div class="route-map" role="img" aria-label="小牧・長久手の戦いにおける犬山、小牧山、岩崎城、長久手、岡崎の位置関係を示した模式図">
-        <div class="map-line"></div>
-        <div class="map-point p-inuyama"><span>犬山城</span></div>
-        <div class="map-point p-komaki"><span>小牧山</span></div>
-        <div class="map-point p-iwasaki"><span>岩崎城</span></div>
-        <div class="map-point p-nagakute"><span>長久手</span></div>
-        <div class="map-point p-okazaki"><span>岡崎方面</span></div>
-        <p class="map-caption">模式図: 実測地図ではなく、作戦の流れを理解するための視覚化です。</p>
+      <div class="campaign-route" aria-label="小牧・長久手の戦いにおける岩崎城の位置づけを示す模式図">
+        <div class="campaign-illustration" aria-hidden="true">
+          <svg viewBox="0 0 760 460" role="presentation" focusable="false">
+            <defs>
+              <linearGradient id="routeSky" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#fbf5e5"/>
+                <stop offset="1" stop-color="#dbe5d3"/>
+              </linearGradient>
+              <marker id="arrowHead" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                <path d="M2,2 L10,6 L2,10 Z" fill="#8a5e37"/>
+              </marker>
+              <marker id="greenArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                <path d="M2,2 L10,6 L2,10 Z" fill="#2f5e4e"/>
+              </marker>
+            </defs>
+            <rect width="760" height="460" rx="18" fill="url(#routeSky)"/>
+            <path d="M24 352 C136 280 230 282 332 326 C440 374 560 326 736 242 L736 460 L24 460 Z" fill="#d5c6a8" opacity=".72"/>
+            <path d="M24 276 C150 206 255 214 340 254 C465 312 582 230 736 162" fill="none" stroke="#8a5e37" stroke-width="18" stroke-linecap="round" stroke-dasharray="26 22" marker-end="url(#arrowHead)"/>
+            <path d="M112 140 C250 122 338 164 422 250 C470 300 532 312 626 292" fill="none" stroke="#2f5e4e" stroke-width="12" stroke-linecap="round" stroke-dasharray="18 16" marker-end="url(#greenArrow)"/>
+            <g class="castle-symbol" transform="translate(360 204)">
+              <path d="M0 76 L54 18 L108 76 Z" fill="#6b4b2f"/>
+              <path d="M18 76 L18 42 L90 42 L90 76 Z" fill="#17221d"/>
+              <path d="M32 42 L32 18 L76 18 L76 42 Z" fill="#2f5e4e"/>
+              <path d="M24 18 L54 -2 L84 18 Z" fill="#8a5e37"/>
+              <circle cx="54" cy="100" r="18" fill="#b77a31" stroke="#17221d" stroke-width="8"/>
+            </g>
+            <g class="route-dot" transform="translate(72 252)"><circle r="15" fill="#fffdf7" stroke="#8a5e37" stroke-width="7"/></g>
+            <g class="route-dot" transform="translate(172 132)"><circle r="15" fill="#fffdf7" stroke="#2f5e4e" stroke-width="7"/></g>
+            <g class="route-dot" transform="translate(604 292)"><circle r="15" fill="#fffdf7" stroke="#2f5e4e" stroke-width="7"/></g>
+            <g transform="translate(626 134)">
+              <path d="M0 108 L52 58 L104 108 Z" fill="#b77a31" opacity=".78"/>
+              <rect x="18" y="72" width="68" height="36" rx="4" fill="#17221d"/>
+              <path d="M34 72 L34 44 L70 44 L70 72 Z" fill="#2f5e4e"/>
+              <path d="M26 44 L52 26 L78 44 Z" fill="#8a5e37"/>
+            </g>
+          </svg>
+        </div>
+        <div class="route-explain">
+          <div class="route-legend">
+            <span class="legend-brown">羽柴方の岡崎侵攻</span>
+            <span class="legend-green">徳川方の追撃</span>
+          </div>
+          <ol class="route-steps">
+            <li>
+              <span class="route-step-no">1</span>
+              <div>
+                <strong>羽柴方が岡崎を狙う</strong>
+                <p>犬山方面から別働隊が出て、家康の本拠に近い岡崎方面へ向かいます。</p>
+              </div>
+            </li>
+            <li class="route-highlight">
+              <span class="route-step-no">2</span>
+              <div>
+                <strong>岩崎城で足が止まる</strong>
+                <p>進路上の岩崎城が抵抗。ここでの足止めが、長久手での決戦につながったと伝わります。</p>
+              </div>
+            </li>
+            <li>
+              <span class="route-step-no">3</span>
+              <div>
+                <strong>徳川方が追いつく</strong>
+                <p>小牧山から追撃した徳川方が、長久手周辺で羽柴方とぶつかります。</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <p class="map-caption">模式図です。実際の距離や方角を正確に示す地図ではなく、作戦の流れを理解するための図です。</p>
       </div>
       <div class="battle-grid">
         <figure class="image-panel battle-image">
