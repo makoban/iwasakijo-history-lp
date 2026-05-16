@@ -44,6 +44,21 @@ Seedance2 には `cut-*.png` の8枚をカット順に入れ、文字は `text-c
 - `videos/tsuchi-no-shiro-v2-preview.png`  
   動画確認用のプレビューサムネイル。
 
+## 迫力強化用の合戦カット
+
+- `videos/battle/battle-01-earth-bridge-bottleneck.mp4`  
+  土橋と門へ敵が押し込まれる低い目線の合戦カット。足元、泥、槍、木の圧力を強めた素材。
+- `videos/battle/battle-01-earth-bridge-bottleneck-last-frame.png`  
+  上記カットの最後のフレーム。
+- `videos/battle/battle-01-earth-bridge-bottleneck-preview.png`  
+  上記カットの確認用プレビュー。
+- `videos/battle/battle-02-palisade-clash.mp4`  
+  木柵際で槍が交差し、土塁上の守備側と下の攻撃側が衝突する山場カット。
+- `videos/battle/battle-02-palisade-clash-last-frame.png`  
+  上記カットの最後のフレーム。
+- `videos/battle/battle-02-palisade-clash-preview.png`  
+  上記カットの確認用プレビュー。
+
 ## 編集方針
 
 - Seedance2 では文字を出さない。日本語字幕・ロゴ・看板は生成しない。
