@@ -801,17 +801,17 @@ figcaption {
 
   .hero {
     min-height: auto;
-    padding: 430px 18px 28px;
+    padding: 330px 18px 28px;
   }
 
   .hero-media {
-    height: 520px;
+    height: 470px;
     bottom: auto;
   }
 
   .hero-media::after {
     background:
-      linear-gradient(180deg, rgba(15, 21, 18, 0.02), rgba(15, 21, 18, 0.22) 42%, rgba(15, 21, 18, 0.86)),
+      linear-gradient(180deg, rgba(15, 21, 18, 0.02), rgba(15, 21, 18, 0.2) 32%, rgba(15, 21, 18, 0.88)),
       linear-gradient(90deg, rgba(15, 21, 18, 0.1), transparent 72%);
   }
 
