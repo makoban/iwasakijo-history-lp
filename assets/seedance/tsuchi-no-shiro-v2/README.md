@@ -59,12 +59,31 @@ Seedance2 には `cut-*.png` の8枚をカット順に入れ、文字は `text-c
 - `videos/battle/battle-02-palisade-clash-preview.png`  
   上記カットの確認用プレビュー。
 
+## 物語補強用のカット
+
+- `videos/story/story-01-building-earthworks.mp4`  
+  土を運び、土塁と木柵を作る築城カット。岩崎城を「土の城」として理解させる前半素材。
+- `videos/story/story-01-building-earthworks-last-frame.png`  
+  上記カットの最後のフレーム。
+- `videos/story/story-01-building-earthworks-preview.png`  
+  上記カットの確認用プレビュー。
+- `videos/story/story-02-roadside-life.mp4`  
+  尾張と三河を結ぶ道沿いの人の動き、城が道を押さえる意味を見せるカット。
+- `videos/story/story-02-roadside-life-last-frame.png`  
+  上記カットの最後のフレーム。
+- `videos/story/story-02-roadside-life-preview.png`  
+  上記カットの確認用プレビュー。
+
 ## 仮編集
 
 - `edited/tsuchi-no-shiro-rough-cut.mp4`  
   文字カード、導入カット、合戦強化カットをつないだ約27秒の映画CMラフ。BGMなし。Seedance2側の音声がある部分だけ効果音として残す。
 - `edited/tsuchi-no-shiro-rough-cut-preview.png`  
   仮編集の確認用プレビュー。
+- `edited/tsuchi-no-shiro-story-cut.mp4`  
+  築城、道沿いの生活、軍勢接近、合戦、余韻まで入れた約37秒の映画CMラフ。こちらを現時点の本線編集にする。
+- `edited/tsuchi-no-shiro-story-cut-preview.png`  
+  約37秒版の確認用プレビュー。
 - `scripts/make_tsuchi_no_shiro_rough.swift`  
   macOS AVFoundationで仮編集を書き出すローカル生成スクリプト。
 

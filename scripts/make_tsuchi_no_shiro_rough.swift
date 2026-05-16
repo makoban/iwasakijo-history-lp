@@ -6,7 +6,7 @@ import Foundation
 let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
 let base = root.appendingPathComponent("assets/seedance/tsuchi-no-shiro-v2")
 let work = base.appendingPathComponent("edited/work")
-let output = base.appendingPathComponent("edited/tsuchi-no-shiro-rough-cut.mp4")
+let output = base.appendingPathComponent("edited/tsuchi-no-shiro-story-cut.mp4")
 
 try? FileManager.default.createDirectory(at: work, withIntermediateDirectories: true)
 try? FileManager.default.createDirectory(at: output.deletingLastPathComponent(), withIntermediateDirectories: true)
@@ -37,7 +37,9 @@ let stills: [StillClip] = [
 let segments: [Segment] = [
     .still(stills[0]),
     .still(stills[1]),
+    .movie(base.appendingPathComponent("videos/story/story-01-building-earthworks.mp4")),
     .still(stills[2]),
+    .movie(base.appendingPathComponent("videos/story/story-02-roadside-life.mp4")),
     .movie(base.appendingPathComponent("videos/tsuchi-no-shiro-v2-seedance2.mp4")),
     .movie(base.appendingPathComponent("videos/battle/battle-01-earth-bridge-bottleneck.mp4")),
     .still(stills[3]),
