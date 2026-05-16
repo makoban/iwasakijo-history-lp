@@ -35,6 +35,15 @@ Seedance2 には `cut-*.png` の8枚をカット順に入れ、文字は `text-c
 - `text-cards/text-05-nagakute.png`  
   「その遅れは、長久手へつながった。そう伝わる。」
 
+## 生成済み動画
+
+- `videos/tsuchi-no-shiro-v2-seedance2.mp4`  
+  8枚の参照画像をまとめて入れた Seedance2 生成クリップ。5.042秒、1280x720、H.264 / AAC。
+- `videos/tsuchi-no-shiro-v2-last-frame.png`  
+  Seedance2の「最後のフレームを返す」で取得した次カット接続用フレーム。
+- `videos/tsuchi-no-shiro-v2-preview.png`  
+  動画確認用のプレビューサムネイル。
+
 ## 編集方針
 
 - Seedance2 では文字を出さない。日本語字幕・ロゴ・看板は生成しない。
@@ -42,4 +51,3 @@ Seedance2 には `cut-*.png` の8枚をカット順に入れ、文字は `text-c
 - 天守・石垣中心の近世城郭にしない。土塁、空堀、土橋、木柵を主役にする。
 - BGMは入れない。足音、土を掘る音、木柵、遠い鬨の声など効果音だけで組み、BGMは後から1本で作る。
 - まずは各カット5秒前後で作り、最後のフレームを次カットの参照にしてつなぐ。
-
