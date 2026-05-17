@@ -9,9 +9,11 @@
   <meta property="og:description" content="尾張と三河を結ぶ道を押さえた岩崎城を、土塁・空堀・丹羽氏・小牧長久手の戦いからビジュアルで紹介。">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/generated/hero-earthwork-castle.png">
+  <link rel="preconnect" href="https://ajax.googleapis.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@500;700;900&display=swap" rel="stylesheet">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,6 +21,7 @@
     <a class="brand" href="#top">岩崎城 歴史案内</a>
     <nav>
       <a href="#now">現在</a>
+      <a href="#model">3D</a>
       <a href="#overview">概要</a>
       <a href="#movie">動画</a>
       <a href="#battle">合戦</a>
@@ -100,6 +103,53 @@
             <span>知る</span>
             <h3>さらに古い古墳の丘</h3>
             <p>本丸跡には6世紀前葉と推定される古墳も確認されています。岩崎城は、何層もの歴史が重なった丘です。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="model" class="section model-section" aria-labelledby="model-title">
+      <div class="section-head">
+        <p class="eyebrow">現在の岩崎城3D</p>
+        <h2 id="model-title">いまの岩崎城を、立体で見る</h2>
+        <p>現在の写真をもとに、石垣、階段、白壁、長い棟、上部の展望塔を読み取れるように整理した外観模型です。実測復元ではなく、現地で見るポイントを直感的につかむための3Dです。</p>
+      </div>
+      <div class="model-layout">
+        <figure class="model-card">
+          <model-viewer
+            src="assets/3d/iwasaki-current-castle.glb"
+            poster="assets/3d/iwasaki-current-castle-render.png"
+            alt="現在の岩崎城を外観模型として表した3Dモデル"
+            camera-controls
+            auto-rotate
+            loading="eager"
+            reveal="auto"
+            rotation-per-second="18deg"
+            shadow-intensity="0.9"
+            exposure="1.05"
+            environment-image="neutral"
+            camera-orbit="45deg 62deg 9m"
+            min-camera-orbit="auto 25deg auto"
+            max-camera-orbit="auto 82deg auto">
+            <img class="model-fallback" src="assets/3d/iwasaki-current-castle-render.png" alt="現在の岩崎城を外観模型として表したレンダー画像">
+          </model-viewer>
+          <figcaption>正面写真から読み取れる特徴を優先した外観模型です。見えない側面・背面は推定を含みます。</figcaption>
+        </figure>
+        <div class="model-points" aria-label="3Dモデルで見るポイント">
+          <article>
+            <span>石垣</span>
+            <h3>丘の上へ上がる入口</h3>
+            <p>階段と石垣を入れることで、いまの城址公園に立った時の見上げる感覚をつかめます。</p>
+          </article>
+          <article>
+            <span>外観</span>
+            <h3>白壁と長い棟</h3>
+            <p>写真で目立つ白壁、連続する屋根、縦格子の窓を整理して、現在の岩崎城らしさを出しています。</p>
+          </article>
+          <article>
+            <span>展望塔</span>
+            <h3>上部の見晴らし</h3>
+            <p>上層の張り出しと展望部分を立体化し、現在のシンボルとして見える姿を補助します。</p>
           </article>
         </div>
       </div>
