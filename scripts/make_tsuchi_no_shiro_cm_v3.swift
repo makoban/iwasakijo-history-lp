@@ -38,6 +38,7 @@ enum Segment {
 }
 
 let v2Base = root.appendingPathComponent("assets/seedance/tsuchi-no-shiro-v2")
+let v3Base = root.appendingPathComponent("assets/seedance/tsuchi-no-shiro-v3")
 
 let segments: [Segment] = [
     .card(.init(id: "01-shitteiru", text: "知っているだろうか。", seconds: 5.0, emphasis: true)),
@@ -62,12 +63,12 @@ let segments: [Segment] = [
     .movie(.init(url: v2Base.appendingPathComponent("videos/battle/battle-02-palisade-clash.mp4"), seconds: 5.0)),
 
     .card(.init(id: "08-caught", text: "その遅れで、\n徳川方が長久手で追いついた。", seconds: 5.5, emphasis: false)),
-    .movie(.init(url: v2Base.appendingPathComponent("videos/story/story-02-roadside-life.mp4"), seconds: 5.0)),
+    .movie(.init(url: v3Base.appendingPathComponent("generated/seedance2-tokugawa-full-speed-nagakute.mp4"), seconds: 5.0)),
 
     .card(.init(id: "09-nagakute", text: "池田恒興、森長可らが戦死。\n岡崎奇襲は失敗した。", seconds: 6.0, emphasis: false)),
-    .movie(.init(url: root.appendingPathComponent("assets/seedance/videos/scene-04-earth-castle-final-seedance2.mp4"), seconds: 5.0)),
+    .movie(.init(url: v3Base.appendingPathComponent("generated/seedance2-tokugawa-victory-okazaki-protected.mp4"), seconds: 5.0)),
 
-    .card(.init(id: "10-final", text: "岩崎城。\n落ちても、時間を奪った土の城。", seconds: 6.0, emphasis: true)),
+    .movie(.init(url: v3Base.appendingPathComponent("generated/seedance2-iwasaki-earth-castle-aerial-text-final.mp4"), seconds: 10.0)),
 ]
 
 func minchoFont(size: CGFloat, bold: Bool) -> NSFont {
