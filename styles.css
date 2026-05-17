@@ -465,6 +465,10 @@ figcaption {
   line-height: 1.6;
 }
 
+figcaption a {
+  color: #e2b26d;
+}
+
 .visual-timeline {
   background: var(--deep);
   color: var(--white);
@@ -801,6 +805,9 @@ figcaption {
 }
 
 .screenshot-grid figure {
+  display: grid;
+  gap: 10px;
+  align-content: start;
   margin: 0;
   overflow: hidden;
   border: 1px solid rgba(255, 253, 247, 0.16);
@@ -809,12 +816,51 @@ figcaption {
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
 }
 
+.source-thumb {
+  display: block;
+  margin: 10px 10px 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 253, 247, 0.14);
+  border-radius: 6px;
+  background: rgba(255, 253, 247, 0.06);
+}
+
 .screenshot-grid img {
+  display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  max-height: 92px;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   object-position: top;
-  filter: saturate(0.92) contrast(1.03);
+  opacity: 0.76;
+  filter: saturate(0.72) contrast(0.96);
+}
+
+.screenshot-grid figcaption {
+  display: grid;
+  gap: 7px;
+  padding: 0 12px 14px;
+  background: transparent;
+}
+
+.screenshot-grid figcaption strong,
+.screenshot-grid figcaption span,
+.screenshot-grid figcaption a {
+  display: block;
+}
+
+.screenshot-grid figcaption strong {
+  color: var(--white);
+  font-size: 14px;
+}
+
+.screenshot-grid figcaption span {
+  color: rgba(255, 253, 247, 0.68);
+}
+
+.screenshot-grid figcaption a {
+  color: #e2b26d;
+  font-weight: 900;
 }
 
 .sources {
@@ -838,6 +884,11 @@ figcaption {
   text-decoration: none;
 }
 
+.source-list a:hover {
+  border-color: rgba(188, 118, 31, 0.48);
+  background: #f8f3e8;
+}
+
 .caution {
   border-left: 6px solid var(--gold);
 }
@@ -847,6 +898,14 @@ figcaption {
   color: rgba(255, 253, 247, 0.74);
   background: #111813;
   font-size: 13px;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer p + p {
+  margin-top: 8px;
 }
 
 .site-footer a {
