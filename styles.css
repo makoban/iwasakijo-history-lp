@@ -225,10 +225,12 @@ a {
   box-shadow: 0 32px 88px rgba(0, 0, 0, 0.32);
 }
 
-.movie-frame video {
+.movie-frame video,
+.movie-frame iframe {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
+  border: 0;
   background: #000;
 }
 
