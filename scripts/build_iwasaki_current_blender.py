@@ -89,11 +89,13 @@ def cone(name, loc, radius1, radius2, depth, mat=None, vertices=24):
     return obj
 
 
-def hip_roof(name, center, width, depth, height, mat, overhang=0.22, ridge_ratio=0.44):
+def hip_roof(name, center, width, depth, height, mat, overhang=0.22, ridge_ratio=0.44, mat_cap=None, mat_trim=None):
     x = width / 2 + overhang
     y = depth / 2 + overhang
     ridge_x = x * ridge_ratio
     cx, cy, cz = center
+    cap_mat = mat_cap or mat
+    trim_mat = mat_trim or mat
     verts = [
         (cx - x, cy - y, cz),
         (cx + x, cy - y, cz),
@@ -116,24 +118,34 @@ def hip_roof(name, center, width, depth, height, mat, overhang=0.22, ridge_ratio
     obj.data.materials.append(mat)
     obj.modifiers.new("roof_weighted_normals", "WEIGHTED_NORMAL")
 
-    cube(f"{name}_eave_front", (cx, cy - y - 0.02, cz - 0.03), (width + overhang * 2.15, 0.08, 0.08), mat, 0.01)
-    cube(f"{name}_eave_back", (cx, cy + y + 0.02, cz - 0.03), (width + overhang * 2.15, 0.08, 0.08), mat, 0.01)
+    cube(f"{name}_eave_front", (cx, cy - y - 0.02, cz - 0.03), (width + overhang * 2.15, 0.08, 0.08), trim_mat, 0.01)
+    cube(f"{name}_eave_back", (cx, cy + y + 0.02, cz - 0.03), (width + overhang * 2.15, 0.08, 0.08), trim_mat, 0.01)
     cube(f"{name}_ridge", (cx, cy, cz + height + 0.035), (ridge_x * 2 + 0.18, 0.08, 0.08), mat, 0.01)
 
     tile_count = max(8, int(width / 0.26))
     for i in range(tile_count):
         tx = cx - width * 0.5 + i * width / max(tile_count - 1, 1)
-        sphere(f"{name}_front_tile_bead_{i}", (tx, cy - y - 0.09, cz + 0.015), 0.035, mat, 12)
-        sphere(f"{name}_back_tile_bead_{i}", (tx, cy + y + 0.09, cz + 0.015), 0.035, mat, 12)
+        sphere(f"{name}_front_tile_bead_{i}", (tx, cy - y - 0.09, cz + 0.015), 0.035, cap_mat, 12)
+        sphere(f"{name}_back_tile_bead_{i}", (tx, cy + y + 0.09, cz + 0.015), 0.035, cap_mat, 12)
         if i % 2 == 0:
-            cube(f"{name}_front_rafter_{i}", (tx, cy - y - 0.02, cz - 0.12), (0.055, 0.28, 0.09), mat, 0.006)
-            cube(f"{name}_back_rafter_{i}", (tx, cy + y + 0.02, cz - 0.12), (0.055, 0.28, 0.09), mat, 0.006)
+            cube(f"{name}_front_rafter_{i}", (tx, cy - y - 0.02, cz - 0.12), (0.055, 0.28, 0.09), trim_mat, 0.006)
+            cube(f"{name}_back_rafter_{i}", (tx, cy + y + 0.02, cz - 0.12), (0.055, 0.28, 0.09), trim_mat, 0.006)
 
     side_count = max(4, int(depth / 0.28))
     for sx in [-1, 1]:
         for j in range(side_count):
             ty = cy - depth * 0.5 + j * depth / max(side_count - 1, 1)
-            sphere(f"{name}_side_tile_bead_{sx}_{j}", (cx + sx * (x + 0.07), ty, cz + 0.015), 0.03, mat, 12)
+            sphere(f"{name}_side_tile_bead_{sx}_{j}", (cx + sx * (x + 0.07), ty, cz + 0.015), 0.03, cap_mat, 12)
+
+    row_count = max(3, int(depth / 0.34))
+    for j in range(row_count):
+        t = (j + 1) / (row_count + 1)
+        front_y = cy - y + t * y
+        back_y = cy + y - t * y
+        z_line = cz + height * t * 0.74
+        span = width * (0.88 - t * 0.18)
+        cube(f"{name}_front_tile_course_{j}", (cx, front_y, z_line + 0.012), (span, 0.022, 0.018), cap_mat, 0.002)
+        cube(f"{name}_back_tile_course_{j}", (cx, back_y, z_line + 0.012), (span, 0.022, 0.018), cap_mat, 0.002)
     return obj
 
 
@@ -229,6 +241,64 @@ def add_decorative_gable(prefix, cx, cy, z, width, mat_edge, mat_shadow):
     sphere(f"{prefix}_crest_right", (cx + width * 0.42, cy - 0.05, z + 0.26), 0.055, mat_edge, 12)
 
 
+def add_triangular_gable(prefix, cx, cy, z, width, height, mat_panel, mat_trim):
+    verts = [
+        (cx - width / 2, cy, z),
+        (cx + width / 2, cy, z),
+        (cx, cy, z + height),
+    ]
+    mesh = bpy.data.meshes.new(f"{prefix}_mesh")
+    mesh.from_pydata(verts, [], [(0, 1, 2)])
+    mesh.update()
+    obj = bpy.data.objects.new(prefix, mesh)
+    bpy.context.collection.objects.link(obj)
+    obj.data.materials.append(mat_panel)
+    obj.modifiers.new("gable_weighted_normals", "WEIGHTED_NORMAL")
+
+    cylinder_between(f"{prefix}_left_trim", verts[0], verts[2], 0.018, mat_trim, 12)
+    cylinder_between(f"{prefix}_right_trim", verts[1], verts[2], 0.018, mat_trim, 12)
+    cylinder_between(f"{prefix}_bottom_trim", verts[0], verts[1], 0.018, mat_trim, 12)
+    for i in range(5):
+        x = cx - width * 0.32 + i * width * 0.16
+        h = height * (1 - abs(x - cx) / (width / 2)) * 0.74
+        cube(f"{prefix}_lattice_{i}", (x, cy - 0.018, z + h * 0.42), (0.022, 0.022, max(0.14, h)), mat_trim, 0.002)
+    sphere(f"{prefix}_round_ornament", (cx, cy - 0.026, z + height * 0.72), 0.055, mat_trim, 12)
+    return obj
+
+
+def add_paving_grid(prefix, cx, cy, z, width, depth, mat_line, x_count, y_count):
+    for i in range(1, x_count):
+        x = cx - width / 2 + width * i / x_count
+        cube(f"{prefix}_grid_x_{i}", (x, cy, z), (0.022, depth, 0.012), mat_line, 0.001)
+    for j in range(1, y_count):
+        y = cy - depth / 2 + depth * j / y_count
+        cube(f"{prefix}_grid_y_{j}", (cx, y, z), (width, 0.022, 0.012), mat_line, 0.001)
+
+
+def add_lattice_panel(prefix, cx, cy, z, width, height, mat_frame, mat_shadow, vertical_count=7):
+    cube(f"{prefix}_shadow", (cx, cy, z), (width, 0.045, height), mat_shadow, 0.004)
+    cube(f"{prefix}_top", (cx, cy - 0.03, z + height / 2), (width, 0.035, 0.035), mat_frame, 0.003)
+    cube(f"{prefix}_bottom", (cx, cy - 0.03, z - height / 2), (width, 0.035, 0.035), mat_frame, 0.003)
+    for i in range(vertical_count):
+        x = cx - width / 2 + (i + 0.5) * width / vertical_count
+        cube(f"{prefix}_bar_{i}", (x, cy - 0.045, z), (0.026, 0.035, height), mat_frame, 0.002)
+
+
+def add_side_lattice_panel(prefix, x, cy, z, depth, height, mat_frame, mat_shadow, vertical_count=6):
+    cube(f"{prefix}_shadow", (x, cy, z), (0.045, depth, height), mat_shadow, 0.004)
+    cube(f"{prefix}_top", (x + 0.03, cy, z + height / 2), (0.035, depth, 0.035), mat_frame, 0.003)
+    cube(f"{prefix}_bottom", (x + 0.03, cy, z - height / 2), (0.035, depth, 0.035), mat_frame, 0.003)
+    for i in range(vertical_count):
+        y = cy - depth / 2 + (i + 0.5) * depth / vertical_count
+        cube(f"{prefix}_bar_{i}", (x + 0.045, y, z), (0.035, 0.026, height), mat_frame, 0.002)
+
+
+def add_site_lamp(prefix, x, y, z, mat_metal, mat_glass):
+    cylinder(f"{prefix}_post", (x, y, z + 0.68), 0.025, 1.36, mat_metal, 12)
+    cube(f"{prefix}_lantern", (x, y, z + 1.43), (0.22, 0.22, 0.28), mat_glass, 0.012)
+    hip_roof(f"{prefix}_cap", (x, y, z + 1.60), 0.30, 0.30, 0.12, mat_metal, 0.04)
+
+
 def look_at(obj, target):
     direction = Vector(target) - obj.location
     obj.rotation_euler = direction.to_track_quat("-Z", "Y").to_euler()
@@ -237,8 +307,10 @@ def look_at(obj, target):
 clear_scene()
 
 mat_plaster = material("warm white plaster", (0.82, 0.78, 0.68, 1.0), 0.82)
-mat_roof = material("dark tiled roof", (0.07, 0.08, 0.09, 1.0), 0.6)
+mat_roof = material("dark blue black tiled roof", (0.035, 0.046, 0.058, 1.0), 0.58)
 mat_roof_edge = material("weathered roof edge", (0.22, 0.22, 0.22, 1.0), 0.62)
+mat_roof_cap = material("pale roof tile caps", (0.73, 0.73, 0.68, 1.0), 0.68)
+mat_eave = material("white eave trim", (0.78, 0.76, 0.68, 1.0), 0.76)
 mat_stone = material("stone wall light", (0.58, 0.54, 0.46, 1.0), 0.86)
 mat_stone2 = material("stone wall warm", (0.70, 0.62, 0.48, 1.0), 0.86)
 mat_stone3 = material("stone wall dark", (0.40, 0.39, 0.35, 1.0), 0.86)
@@ -246,11 +318,12 @@ mat_wood = material("dark timber", (0.16, 0.10, 0.07, 1.0), 0.76)
 mat_blackwood = material("black balcony lattice", (0.05, 0.04, 0.035, 1.0), 0.7)
 mat_ground = material("park earth and grass", (0.30, 0.34, 0.22, 1.0), 0.9)
 mat_path = material("stone stairs", (0.42, 0.40, 0.36, 1.0), 0.84)
+mat_paving_line = material("paving joint", (0.24, 0.23, 0.21, 1.0), 0.9)
 mat_leaf = material("pine green", (0.08, 0.22, 0.13, 1.0), 0.85)
 mat_gold = material("roof ornament gold", (0.95, 0.66, 0.22, 1.0), 0.45, 0.25)
 mat_shadow = material("window shadow", (0.12, 0.11, 0.10, 1.0), 0.72)
 mat_metal = material("brushed steel handrails", (0.54, 0.56, 0.54, 1.0), 0.32, 0.45)
-mat_dark_tile = material("blue black ceramic tile", (0.045, 0.058, 0.07, 1.0), 0.55)
+mat_glass = material("muted lantern glass", (0.74, 0.70, 0.56, 1.0), 0.36)
 
 # Hill and retaining walls.
 cube("soft hill platform", (0, -0.25, 0.08), (9.0, 6.2, 0.16), mat_ground, 0.08)
@@ -259,6 +332,8 @@ cube("front stone retaining mass", (0.2, -2.48, 0.92), (7.6, 0.42, 1.42), mat_st
 cube("left lower stone wall", (-2.9, -3.15, 0.42), (3.6, 0.28, 0.72), mat_stone3, 0.025)
 add_stone_face("front_wall", -2.72, -3.55, 3.85, 0.26, 1.62, [mat_stone, mat_stone2, mat_stone3])
 add_stone_face("lower_left_wall", -3.32, -4.55, -1.25, 0.10, 0.76, [mat_stone, mat_stone2, mat_stone3])
+add_stone_face("right_return_wall", -2.1, 2.9, 4.1, 0.46, 1.55, [mat_stone, mat_stone2, mat_stone3])
+add_paving_grid("lower_stair_landing", -0.5, -4.0, 0.22, 1.38, 0.46, mat_paving_line, 4, 2)
 
 # Main entrance stairs.
 for i in range(18):
@@ -279,54 +354,73 @@ add_stone_face("main_base_front", -1.49, -3.55, 3.05, 1.06, 2.12, [mat_stone, ma
 cube("main plaster wall", (-0.35, -0.35, 2.58), (6.55, 1.94, 0.92), mat_plaster, 0.02)
 cube("entrance shadow", (-0.48, -1.34, 1.45), (0.86, 0.08, 0.76), mat_shadow, 0.01)
 cube("entrance lintel", (-0.48, -1.40, 1.88), (1.05, 0.12, 0.12), mat_wood, 0.01)
-hip_roof("main_long_roof", (-0.35, -0.35, 3.12), 6.9, 2.22, 0.72, mat_roof, 0.28)
+hip_roof("main_long_roof", (-0.35, -0.35, 3.12), 6.9, 2.22, 0.72, mat_roof, 0.28, mat_cap=mat_roof_cap, mat_trim=mat_eave)
 
 for start_x, count in [(-2.9, 5), (-1.0, 5), (1.0, 4)]:
     add_window_bank(f"main_window_{start_x}", start_x, -1.34, 2.66, count, mat_shadow, 0.18)
+add_lattice_panel("main_front_wide_window_left", -2.20, -1.365, 2.64, 0.90, 0.46, mat_roof_edge, mat_shadow, 6)
+add_lattice_panel("main_front_wide_window_center", -0.65, -1.365, 2.64, 0.92, 0.46, mat_roof_edge, mat_shadow, 6)
+add_lattice_panel("main_front_wide_window_right", 1.12, -1.365, 2.64, 0.72, 0.46, mat_roof_edge, mat_shadow, 5)
 
 add_wall_panel_lines("main_front_wall", -0.35, -1.335, 2.58, 6.3, 0.72, mat_roof_edge, 14)
 add_wall_panel_lines("main_back_wall", -0.35, 0.635, 2.56, 5.8, 0.68, mat_roof_edge, 10)
 
 for i in range(13):
-    cube(f"main_under_eave_bracket_{i}", (-3.35 + i * 0.5, -1.46, 2.98), (0.11, 0.34, 0.10), mat_roof_edge, 0.008)
+    cube(f"main_under_eave_bracket_{i}", (-3.35 + i * 0.5, -1.46, 2.98), (0.11, 0.34, 0.10), mat_eave, 0.008)
 
 # Left wing, visible in the current photo.
 cube("left_wing_plaster", (-2.55, 0.65, 2.45), (2.35, 1.55, 0.82), mat_plaster, 0.02)
-hip_roof("left_wing_roof", (-2.55, 0.65, 2.95), 2.62, 1.86, 0.56, mat_roof, 0.24)
+hip_roof("left_wing_roof", (-2.55, 0.65, 2.95), 2.62, 1.86, 0.56, mat_roof, 0.24, mat_cap=mat_roof_cap, mat_trim=mat_eave)
 add_window_bank("left_wing_window", -3.18, -0.15, 2.48, 5, mat_shadow, 0.17)
+add_lattice_panel("left_wing_back_window", -2.55, 1.44, 2.48, 0.86, 0.42, mat_roof_edge, mat_shadow, 5)
 add_wall_panel_lines("left_wing_side_wall", -2.55, -0.15, 2.48, 1.7, 0.62, mat_roof_edge, 5)
 
 # Tower stack and modern observation balcony.
 cube("tower_lower_wall", (1.85, -0.13, 3.32), (2.55, 1.75, 1.02), mat_plaster, 0.02)
-hip_roof("tower_lower_roof", (1.85, -0.13, 3.88), 2.95, 2.08, 0.64, mat_roof, 0.24)
+hip_roof("tower_lower_roof", (1.85, -0.13, 3.88), 2.95, 2.08, 0.64, mat_roof, 0.24, mat_cap=mat_roof_cap, mat_trim=mat_eave)
 add_window_bank("tower_lower_window", 1.42, -1.05, 3.32, 4, mat_shadow, 0.16)
 add_decorative_gable("tower_lower_front", 1.85, -1.23, 3.64, 1.2, mat_roof_edge, mat_shadow)
+add_triangular_gable("tower_lower_front_gable", 1.85, -1.285, 3.72, 1.48, 0.52, mat_plaster, mat_roof_cap)
 
 cube("tower_middle_wall", (1.85, -0.13, 4.34), (1.95, 1.36, 0.82), mat_plaster, 0.018)
-hip_roof("tower_middle_roof", (1.85, -0.13, 4.82), 2.35, 1.68, 0.54, mat_roof, 0.22)
+hip_roof("tower_middle_roof", (1.85, -0.13, 4.82), 2.35, 1.68, 0.54, mat_roof, 0.22, mat_cap=mat_roof_cap, mat_trim=mat_eave)
 add_window_bank("tower_mid_window", 1.52, -0.88, 4.32, 3, mat_shadow, 0.15)
 add_decorative_gable("tower_middle_front", 1.85, -1.02, 4.64, 0.92, mat_roof_edge, mat_shadow)
+add_triangular_gable("tower_middle_front_gable", 1.85, -1.075, 4.68, 1.14, 0.42, mat_plaster, mat_roof_cap)
 
 cube("observation_core", (1.85, -0.13, 5.15), (1.62, 1.08, 0.64), mat_plaster, 0.014)
 add_balcony("observation_deck", 1.85, -0.13, 5.08, 2.55, 1.84, mat_blackwood)
-hip_roof("observation_roof", (1.85, -0.13, 5.58), 2.25, 1.58, 0.66, mat_roof, 0.26)
+hip_roof("observation_roof", (1.85, -0.13, 5.58), 2.25, 1.58, 0.66, mat_roof, 0.26, mat_cap=mat_roof_cap, mat_trim=mat_eave)
 add_window_bank("observation_front_screen", 1.28, -1.07, 5.2, 8, mat_shadow, 0.16)
+add_lattice_panel("observation_front_full_screen", 1.85, -1.075, 5.43, 2.08, 0.64, mat_metal, mat_shadow, 11)
+add_side_lattice_panel("observation_right_full_screen", 3.16, -0.13, 5.43, 1.34, 0.64, mat_metal, mat_shadow, 7)
 
 for x in [1.45, 2.25]:
     cone(f"gold_roof_ornament_{x}", (x, -0.13, 6.12), 0.07, 0.0, 0.24, mat_gold, 16)
+for x, y in [(0.58, -0.98), (3.12, -0.98), (0.58, 0.72), (3.12, 0.72)]:
+    cylinder_between(f"observation_outer_post_{x}_{y}", (x, y, 4.92), (x, y, 5.78), 0.018, mat_metal, 10)
 
 # Side building on the right edge.
 cube("right_side_wall", (3.25, -0.1, 2.72), (1.35, 1.62, 0.78), mat_plaster, 0.02)
-hip_roof("right_side_roof", (3.25, -0.1, 3.22), 1.7, 1.92, 0.48, mat_roof, 0.22)
+hip_roof("right_side_roof", (3.25, -0.1, 3.22), 1.7, 1.92, 0.48, mat_roof, 0.22, mat_cap=mat_roof_cap, mat_trim=mat_eave)
 cube("right_balcony_mass", (2.65, -1.02, 2.15), (1.1, 0.12, 0.52), mat_blackwood, 0.01)
 add_wall_panel_lines("right_side_wall_panel", 3.25, -0.92, 2.72, 1.0, 0.52, mat_roof_edge, 4)
+add_lattice_panel("right_front_dark_lattice", 2.65, -1.105, 2.15, 1.02, 0.46, mat_blackwood, mat_shadow, 7)
 
 # Paved terrace and low timber fence visible around the current museum.
 cube("upper_paved_terrace", (1.1, -2.0, 1.69), (4.3, 0.82, 0.045), mat_path, 0.01)
+add_paving_grid("upper_paved_terrace", 1.1, -2.0, 1.725, 4.18, 0.74, mat_paving_line, 7, 2)
+cube("right_paved_court", (2.65, 1.45, 1.52), (3.4, 1.28, 0.05), mat_path, 0.01)
+add_paving_grid("right_paved_court", 2.65, 1.45, 1.56, 3.28, 1.18, mat_paving_line, 6, 3)
 for i in range(8):
     x = -0.95 + i * 0.52
     cube(f"front_low_fence_post_{i}", (x, -2.45, 1.93), (0.045, 0.045, 0.45), mat_wood, 0.004)
 cube("front_low_fence_top", (0.86, -2.45, 2.08), (3.72, 0.04, 0.045), mat_wood, 0.004)
+for i in range(7):
+    x = 1.25 + i * 0.45
+    cube(f"side_court_fence_post_{i}", (x, 2.12, 1.78), (0.05, 0.05, 0.50), mat_wood, 0.004)
+cube("side_court_fence_top", (2.6, 2.12, 2.0), (3.15, 0.045, 0.05), mat_wood, 0.004)
+add_site_lamp("right_court_lamp", 4.05, 1.55, 1.55, mat_metal, mat_glass)
 
 # Foreground sign stone and planting to anchor the model to the current site.
 cube("iwasaki_sign_stone", (3.85, -3.35, 1.08), (0.54, 0.20, 1.92), mat_stone3, 0.04)
@@ -370,7 +464,7 @@ camera = bpy.context.object
 look_at(camera, (0.05, -0.55, 2.72))
 camera.data.lens = 32
 camera.data.type = "ORTHO"
-camera.data.ortho_scale = 11.2
+camera.data.ortho_scale = 11.8
 bpy.context.scene.camera = camera
 
 world = bpy.context.scene.world or bpy.data.worlds.new("World")
