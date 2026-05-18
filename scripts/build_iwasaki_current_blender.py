@@ -1,5 +1,4 @@
 import math
-import os
 import random
 from pathlib import Path
 
@@ -58,6 +57,29 @@ def cylinder(name, loc, radius, depth, mat=None, vertices=24):
     return obj
 
 
+def sphere(name, loc, radius, mat=None, segments=16):
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=segments, ring_count=8, radius=radius, location=loc)
+    obj = bpy.context.object
+    obj.name = name
+    if mat:
+        obj.data.materials.append(mat)
+    return obj
+
+
+def cylinder_between(name, start, end, radius, mat=None, vertices=16):
+    start_v = Vector(start)
+    end_v = Vector(end)
+    direction = end_v - start_v
+    mid = start_v + direction * 0.5
+    bpy.ops.mesh.primitive_cylinder_add(vertices=vertices, radius=radius, depth=direction.length, location=mid)
+    obj = bpy.context.object
+    obj.name = name
+    obj.rotation_euler = direction.to_track_quat("Z", "Y").to_euler()
+    if mat:
+        obj.data.materials.append(mat)
+    return obj
+
+
 def cone(name, loc, radius1, radius2, depth, mat=None, vertices=24):
     bpy.ops.mesh.primitive_cone_add(vertices=vertices, radius1=radius1, radius2=radius2, depth=depth, location=loc)
     obj = bpy.context.object
@@ -98,9 +120,20 @@ def hip_roof(name, center, width, depth, height, mat, overhang=0.22, ridge_ratio
     cube(f"{name}_eave_back", (cx, cy + y + 0.02, cz - 0.03), (width + overhang * 2.15, 0.08, 0.08), mat, 0.01)
     cube(f"{name}_ridge", (cx, cy, cz + height + 0.035), (ridge_x * 2 + 0.18, 0.08, 0.08), mat, 0.01)
 
-    for i in range(6):
-        tx = cx - width * 0.42 + i * width * 0.168
-        cube(f"{name}_tile_hint_{i}", (tx, cy - y - 0.08, cz + 0.02), (0.035, 0.16, 0.08), mat, 0.006)
+    tile_count = max(8, int(width / 0.26))
+    for i in range(tile_count):
+        tx = cx - width * 0.5 + i * width / max(tile_count - 1, 1)
+        sphere(f"{name}_front_tile_bead_{i}", (tx, cy - y - 0.09, cz + 0.015), 0.035, mat, 12)
+        sphere(f"{name}_back_tile_bead_{i}", (tx, cy + y + 0.09, cz + 0.015), 0.035, mat, 12)
+        if i % 2 == 0:
+            cube(f"{name}_front_rafter_{i}", (tx, cy - y - 0.02, cz - 0.12), (0.055, 0.28, 0.09), mat, 0.006)
+            cube(f"{name}_back_rafter_{i}", (tx, cy + y + 0.02, cz - 0.12), (0.055, 0.28, 0.09), mat, 0.006)
+
+    side_count = max(4, int(depth / 0.28))
+    for sx in [-1, 1]:
+        for j in range(side_count):
+            ty = cy - depth * 0.5 + j * depth / max(side_count - 1, 1)
+            sphere(f"{name}_side_tile_bead_{sx}_{j}", (cx + sx * (x + 0.07), ty, cz + 0.015), 0.03, mat, 12)
     return obj
 
 
@@ -122,6 +155,19 @@ def add_balcony(prefix, cx, cy, z, width, depth, mat_wood):
         y = cy - depth / 2 + 0.18 + i * (depth - 0.36) / 4
         cube(f"{prefix}_left_post_{i}", (cx - width / 2 - 0.02, y, z + 0.22), (0.035, 0.035, 0.42), mat_wood, 0.004)
         cube(f"{prefix}_right_post_{i}", (cx + width / 2 + 0.02, y, z + 0.22), (0.035, 0.035, 0.42), mat_wood, 0.004)
+    for i in range(10):
+        x = cx - width / 2 + 0.14 + i * (width - 0.28) / 9
+        cube(f"{prefix}_front_mesh_{i}", (x, cy - depth / 2 - 0.04, z + 0.42), (0.018, 0.018, 0.58), mat_wood, 0.002)
+        cube(f"{prefix}_back_mesh_{i}", (x, cy + depth / 2 + 0.04, z + 0.42), (0.018, 0.018, 0.58), mat_wood, 0.002)
+    for j in range(6):
+        y = cy - depth / 2 + 0.14 + j * (depth - 0.28) / 5
+        cube(f"{prefix}_left_mesh_{j}", (cx - width / 2 - 0.04, y, z + 0.42), (0.018, 0.018, 0.58), mat_wood, 0.002)
+        cube(f"{prefix}_right_mesh_{j}", (cx + width / 2 + 0.04, y, z + 0.42), (0.018, 0.018, 0.58), mat_wood, 0.002)
+    for h, label in [(0.36, "lower"), (0.62, "upper")]:
+        cube(f"{prefix}_{label}_front_rail", (cx, cy - depth / 2 - 0.05, z + h), (width, 0.026, 0.026), mat_wood, 0.004)
+        cube(f"{prefix}_{label}_back_rail", (cx, cy + depth / 2 + 0.05, z + h), (width, 0.026, 0.026), mat_wood, 0.004)
+        cube(f"{prefix}_{label}_left_rail", (cx - width / 2 - 0.05, cy, z + h), (0.026, depth, 0.026), mat_wood, 0.004)
+        cube(f"{prefix}_{label}_right_rail", (cx + width / 2 + 0.05, cy, z + h), (0.026, depth, 0.026), mat_wood, 0.004)
 
 
 def add_stone_face(prefix, y, x_min, x_max, z_min, z_max, stone_mats):
@@ -159,6 +205,30 @@ def add_tree(prefix, x, y, z, trunk_mat, leaf_mat, scale=1.0):
         cone(f"{prefix}_foliage_{i}", (x + ox * scale, y + oy * scale, z + oz * scale), r * scale, 0.03 * scale, 0.5 * scale, leaf_mat, 18)
 
 
+def add_handrail(prefix, x, y0, y1, z0, z1, mat_metal):
+    cylinder_between(f"{prefix}_rail", (x, y0, z0), (x, y1, z1), 0.025, mat_metal, 14)
+    for i in range(6):
+        t = i / 5
+        y = y0 + (y1 - y0) * t
+        z = z0 + (z1 - z0) * t
+        cylinder_between(f"{prefix}_post_{i}", (x, y, z - 0.34), (x, y, z), 0.018, mat_metal, 12)
+
+
+def add_wall_panel_lines(prefix, x0, y, z, width, height, mat_line, count):
+    for i in range(count):
+        x = x0 - width / 2 + (i + 1) * width / (count + 1)
+        cube(f"{prefix}_panel_line_{i}", (x, y, z), (0.018, 0.035, height), mat_line, 0.002)
+
+
+def add_decorative_gable(prefix, cx, cy, z, width, mat_edge, mat_shadow):
+    cube(f"{prefix}_gable_shadow", (cx, cy, z), (width, 0.06, 0.36), mat_shadow, 0.006)
+    for i in range(7):
+        x = cx - width * 0.42 + i * width * 0.14
+        cube(f"{prefix}_gable_louver_{i}", (x, cy - 0.035, z + 0.02), (0.03, 0.04, 0.34), mat_edge, 0.002)
+    sphere(f"{prefix}_crest_left", (cx - width * 0.42, cy - 0.05, z + 0.26), 0.055, mat_edge, 12)
+    sphere(f"{prefix}_crest_right", (cx + width * 0.42, cy - 0.05, z + 0.26), 0.055, mat_edge, 12)
+
+
 def look_at(obj, target):
     direction = Vector(target) - obj.location
     obj.rotation_euler = direction.to_track_quat("-Z", "Y").to_euler()
@@ -179,6 +249,8 @@ mat_path = material("stone stairs", (0.42, 0.40, 0.36, 1.0), 0.84)
 mat_leaf = material("pine green", (0.08, 0.22, 0.13, 1.0), 0.85)
 mat_gold = material("roof ornament gold", (0.95, 0.66, 0.22, 1.0), 0.45, 0.25)
 mat_shadow = material("window shadow", (0.12, 0.11, 0.10, 1.0), 0.72)
+mat_metal = material("brushed steel handrails", (0.54, 0.56, 0.54, 1.0), 0.32, 0.45)
+mat_dark_tile = material("blue black ceramic tile", (0.045, 0.058, 0.07, 1.0), 0.55)
 
 # Hill and retaining walls.
 cube("soft hill platform", (0, -0.25, 0.08), (9.0, 6.2, 0.16), mat_ground, 0.08)
@@ -195,6 +267,11 @@ for i in range(18):
     cube(f"front_stair_{i}", (-0.5, y, z), (1.12, 0.12, 0.045), mat_path, 0.006)
 cube("left_stair_wall", (-1.16, -3.0, 0.78), (0.10, 2.2, 1.05), mat_stone3, 0.018)
 cube("right_stair_wall", (0.16, -3.0, 0.78), (0.10, 2.2, 1.05), mat_stone3, 0.018)
+add_handrail("left_stair_handrail", -0.88, -3.82, -2.05, 0.48, 1.48, mat_metal)
+add_handrail("center_stair_handrail", -0.50, -3.82, -2.05, 0.48, 1.48, mat_metal)
+add_handrail("right_stair_handrail", -0.12, -3.82, -2.05, 0.48, 1.48, mat_metal)
+cube("entrance_dark_void", (-0.48, -1.63, 1.28), (0.96, 0.12, 0.72), mat_shadow, 0.01)
+cube("entrance_wood_beam", (-0.48, -1.70, 1.72), (1.28, 0.16, 0.11), mat_wood, 0.01)
 
 # Long current castle structure.
 cube("main stone base", (-0.25, -0.35, 1.62), (6.8, 2.22, 1.15), mat_stone2, 0.03)
@@ -207,6 +284,9 @@ hip_roof("main_long_roof", (-0.35, -0.35, 3.12), 6.9, 2.22, 0.72, mat_roof, 0.28
 for start_x, count in [(-2.9, 5), (-1.0, 5), (1.0, 4)]:
     add_window_bank(f"main_window_{start_x}", start_x, -1.34, 2.66, count, mat_shadow, 0.18)
 
+add_wall_panel_lines("main_front_wall", -0.35, -1.335, 2.58, 6.3, 0.72, mat_roof_edge, 14)
+add_wall_panel_lines("main_back_wall", -0.35, 0.635, 2.56, 5.8, 0.68, mat_roof_edge, 10)
+
 for i in range(13):
     cube(f"main_under_eave_bracket_{i}", (-3.35 + i * 0.5, -1.46, 2.98), (0.11, 0.34, 0.10), mat_roof_edge, 0.008)
 
@@ -214,19 +294,23 @@ for i in range(13):
 cube("left_wing_plaster", (-2.55, 0.65, 2.45), (2.35, 1.55, 0.82), mat_plaster, 0.02)
 hip_roof("left_wing_roof", (-2.55, 0.65, 2.95), 2.62, 1.86, 0.56, mat_roof, 0.24)
 add_window_bank("left_wing_window", -3.18, -0.15, 2.48, 5, mat_shadow, 0.17)
+add_wall_panel_lines("left_wing_side_wall", -2.55, -0.15, 2.48, 1.7, 0.62, mat_roof_edge, 5)
 
 # Tower stack and modern observation balcony.
 cube("tower_lower_wall", (1.85, -0.13, 3.32), (2.55, 1.75, 1.02), mat_plaster, 0.02)
 hip_roof("tower_lower_roof", (1.85, -0.13, 3.88), 2.95, 2.08, 0.64, mat_roof, 0.24)
 add_window_bank("tower_lower_window", 1.42, -1.05, 3.32, 4, mat_shadow, 0.16)
+add_decorative_gable("tower_lower_front", 1.85, -1.23, 3.64, 1.2, mat_roof_edge, mat_shadow)
 
 cube("tower_middle_wall", (1.85, -0.13, 4.34), (1.95, 1.36, 0.82), mat_plaster, 0.018)
 hip_roof("tower_middle_roof", (1.85, -0.13, 4.82), 2.35, 1.68, 0.54, mat_roof, 0.22)
 add_window_bank("tower_mid_window", 1.52, -0.88, 4.32, 3, mat_shadow, 0.15)
+add_decorative_gable("tower_middle_front", 1.85, -1.02, 4.64, 0.92, mat_roof_edge, mat_shadow)
 
 cube("observation_core", (1.85, -0.13, 5.15), (1.62, 1.08, 0.64), mat_plaster, 0.014)
 add_balcony("observation_deck", 1.85, -0.13, 5.08, 2.55, 1.84, mat_blackwood)
 hip_roof("observation_roof", (1.85, -0.13, 5.58), 2.25, 1.58, 0.66, mat_roof, 0.26)
+add_window_bank("observation_front_screen", 1.28, -1.07, 5.2, 8, mat_shadow, 0.16)
 
 for x in [1.45, 2.25]:
     cone(f"gold_roof_ornament_{x}", (x, -0.13, 6.12), 0.07, 0.0, 0.24, mat_gold, 16)
@@ -235,10 +319,21 @@ for x in [1.45, 2.25]:
 cube("right_side_wall", (3.25, -0.1, 2.72), (1.35, 1.62, 0.78), mat_plaster, 0.02)
 hip_roof("right_side_roof", (3.25, -0.1, 3.22), 1.7, 1.92, 0.48, mat_roof, 0.22)
 cube("right_balcony_mass", (2.65, -1.02, 2.15), (1.1, 0.12, 0.52), mat_blackwood, 0.01)
+add_wall_panel_lines("right_side_wall_panel", 3.25, -0.92, 2.72, 1.0, 0.52, mat_roof_edge, 4)
+
+# Paved terrace and low timber fence visible around the current museum.
+cube("upper_paved_terrace", (1.1, -2.0, 1.69), (4.3, 0.82, 0.045), mat_path, 0.01)
+for i in range(8):
+    x = -0.95 + i * 0.52
+    cube(f"front_low_fence_post_{i}", (x, -2.45, 1.93), (0.045, 0.045, 0.45), mat_wood, 0.004)
+cube("front_low_fence_top", (0.86, -2.45, 2.08), (3.72, 0.04, 0.045), mat_wood, 0.004)
 
 # Foreground sign stone and planting to anchor the model to the current site.
-cube("iwasaki_sign_stone", (3.75, -3.35, 0.96), (0.42, 0.16, 1.62), mat_stone3, 0.035)
-cube("sign_face_light", (3.75, -3.44, 1.02), (0.34, 0.035, 1.38), mat_stone, 0.015)
+cube("iwasaki_sign_stone", (3.85, -3.35, 1.08), (0.54, 0.20, 1.92), mat_stone3, 0.04)
+cube("sign_face_light", (3.85, -3.47, 1.08), (0.43, 0.035, 1.62), mat_stone, 0.015)
+for i in range(3):
+    cube(f"sign_engraved_stroke_{i}", (3.85, -3.495, 1.62 - i * 0.42), (0.22, 0.02, 0.045), mat_plaster, 0.004)
+    cube(f"sign_engraved_vertical_{i}", (3.80 + i * 0.06, -3.5, 1.42 - i * 0.36), (0.035, 0.02, 0.28), mat_plaster, 0.004)
 
 random.seed(2026)
 for idx, (x, y, s) in enumerate([

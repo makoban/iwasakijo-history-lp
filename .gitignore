@@ -1,3 +1,5 @@
 .playwright-mcp/
 assets/seedance/tsuchi-no-shiro-v3/work/
+assets/3d/references/commons/*.jpg
+assets/3d/references/commons/*.JPG
 .DS_Store
